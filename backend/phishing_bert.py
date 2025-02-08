@@ -1,3 +1,10 @@
+# This module is used to determine whether a link is phishing or not using a BERT model
+'''
+Features:
+- Determines whether a link is phishing or not
+- Isolate URLs, IPs, domains, and emails from text using REGEX
+'''
+
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 import torch
 import torch.nn.functional as F
