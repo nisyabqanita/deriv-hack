@@ -77,14 +77,40 @@ const CollaborationSpace = () => {
 
   const MessageBubble = ({ message }) => {
     if (!message || !message.content) return null;
-    
+  
     const [email, content] = message.content.includes(": ")
       ? message.content.split(": ")
       : ["Unknown", message.content];
+  
     const isCurrentUser = email === userEmail;
     const bgColor = isCurrentUser ? "bg-red-500 text-white" : "bg-gray-800 text-white";
     const alignment = isCurrentUser ? "justify-end" : "justify-start";
-
+  
+    console.log(message.phishing_text);
+    console.log(message.malicious_text);
+  
+    let warningText = null;
+  
+    if (!isCurrentUser) { // Show warning only for the receiver
+      if (message.phishing_text) {
+        if (typeof message.phishing_text === "object") {
+          const phishingEntries = Object.entries(message.phishing_text);
+          if (phishingEntries.length > 0) {
+            const [url, details] = phishingEntries[0]; // Extract first phishing entry
+            if (details.classification === "Phishing") {
+              warningText = `⚠ Warning: The link ${url} is ${details.confidence} a phishing link. Please be careful.`;
+              console.log(warningText);
+            }
+          }
+        }
+      } else if (message.malicious_text) {
+        warningText = `🚨 Malicious Activity Detected:\n${message.malicious_text}`;
+        console.log(warningText);
+      } else {
+        console.log("No phishing or malicious text detected.");
+      }
+    }
+  
     return (
       <motion.div
         className={`flex ${alignment} mb-4`}
@@ -101,6 +127,14 @@ const CollaborationSpace = () => {
           <div className={`p-3 rounded-2xl ${bgColor} shadow-lg`}>
             <p className="text-xs text-gray-300">{email}</p>
             <p className="text-sm font-medium">{content}</p>
+  
+            {/* Show warning only for the receiver (not sender) */}
+            {!isCurrentUser && warningText && (
+              <p className="text-xs mt-2 p-2 bg-yellow-700 text-yellow-300 rounded-md whitespace-pre-line">
+                {warningText}
+              </p>
+            )}
+  
             <p className="text-[10px] text-gray-300 mt-1 text-right">{message.timestamp || ""}</p>
           </div>
         </div>

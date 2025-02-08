@@ -8,7 +8,7 @@ import json
 from datetime import datetime
 import sqlite3
 import phishing_bert as pb
-from malicious_text_analyser import detect_malicious_activity
+from malicious_text_analyser import live_detect_malicious_activity
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -122,7 +122,7 @@ def on_message(data):
         malicious_result = None
     else:
         phishing_result = None
-        malicious_result = detect_malicious_activity(data["content"])
+        malicious_result = live_detect_malicious_activity(data["content"])
 
     conn = sqlite3.connect("database.db")
     c = conn.cursor()
