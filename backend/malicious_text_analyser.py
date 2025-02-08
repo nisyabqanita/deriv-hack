@@ -41,9 +41,9 @@ def live_detect_malicious_activity(new_message):
     add_message("user", new_message)
 
     message = claude_client.messages.create(
-        model="claude-3-5-sonnet-20241022",
+        model="claude-3-5-haiku-20241022",
         max_tokens=1024,
-        system="You are a chatbot that detects fraudulent user behavior. You will analyse the message and only flag if you detect malicious activity. Only output 'Potential malicious activity detected' if you detect malicious activity.",
+        system="You are a chatbot that detects fraudulent user behavior. You will analyse the message and only flag if you detect malicious activity. give output in dictionary format, for example {'flag': True, 'reason': 'phishing'}",
         messages=chat_history,
         temperature=0.2,
     )

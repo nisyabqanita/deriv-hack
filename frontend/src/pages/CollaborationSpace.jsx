@@ -13,32 +13,12 @@ const CollaborationSpace = () => {
   const socket = useRef(null);
   const messageContainerRef = useRef(null);
   const { projectId } = useParams();
-  const [userId, setUserId] = useState(null); // FLAG: Added state for userId
+
 
   const userEmail = localStorage.getItem("userEmail") || "anonymous";
-  useEffect(() => {
-    // FLAG: Fetch the user id from the server using the userEmail
-    const fetchUserId = async () => {
-        try {
-            // Adjust the endpoint URL as needed
-            const response = await fetch("http://localhost:5000/api/get_user_id?email=${encodeURIComponent(userEmail)}");
-            if (!response.ok) {
-                throw new Error('Failed to fetch user id');
-            }
-            const data = await response.json();
-            // Assuming the endpoint returns { userId: 123 } if successful
-            setUserId(data.userId);
-        } catch (error) {
-            console.error('Error fetching user id:', error);
-        }
-    };
-
-    // Only attempt to fetch if userEmail is not "anonymous"
-    if (userEmail !== 'anonymous') {
-        fetchUserId();
-    }
-}, [userEmail]);
-
+  const userId = localStorage.getItem('userId');
+  console.log(userEmail);
+  console.log(userId);
 
   useEffect(() => {
     socket.current = io("http://localhost:5000");
@@ -76,6 +56,9 @@ const CollaborationSpace = () => {
 
     const timestamp = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
     const messageWithEmail = `${userEmail}: ${newMessage}`;
+
+    console.log("yhis is vhecking uid");
+    console.log(userId);
 
     socket.current.emit("send-message", {
       projectId,
