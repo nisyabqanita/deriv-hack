@@ -68,6 +68,7 @@ def call_openai_api(image_path):
             },
         ],
         max_tokens=300,
+        temperature=0.2,
     )
 
     return response.choices[0].message.content
@@ -93,6 +94,7 @@ def call_claude_api(image_path):
     message = claude_client.messages.create(
         model="claude-3-5-sonnet-20241022",
         max_tokens=1024,
+        temperature=0.2,
         messages=[
             {
                 "role": "user",
@@ -120,9 +122,9 @@ def call_claude_api(image_path):
 
 
 # Example usage
-image_path = "backend/tng_detailed.jpg"
+# image_path = "backend/images/tng_detailed.jpg"
 # gpt_response = call_openai_api(image_path)
 # print(gpt_response)
 
-claude_response = call_claude_api(image_path)
-print(claude_response)
+# claude_response = call_claude_api(image_path)
+# print(claude_response)
