@@ -6,6 +6,8 @@ from email.mime.multipart import MIMEMultipart
 import json
 from datetime import datetime
 import sqlite3
+import phishing_bert as pb
+from malicious_text_analyser import detect_malicious_activity
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -18,6 +20,9 @@ def init_db():
     c = conn.cursor()
 
     # Create tables if they don't exist
+    c.execute("""CREATE TABLE IF NOT EXISTS active_users
+             (id INTEGER PRIMARY KEY, project_id INTEGER, 
+              user_email TEXT, socket_id TEXT, last_active TIMESTAMP)""")
     c.execute("""CREATE TABLE IF NOT EXISTS editor_content
                  (id INTEGER PRIMARY KEY, project_id INTEGER, 
                   content TEXT, updated_at TIMESTAMP)""")
@@ -27,7 +32,8 @@ def init_db():
                  (id INTEGER PRIMARY KEY, title TEXT, description TEXT)""")
     c.execute("""CREATE TABLE IF NOT EXISTS messages
                  (id INTEGER PRIMARY KEY, project_id INTEGER, user_id INTEGER, 
-                  content TEXT, type TEXT, created_at TIMESTAMP)""")
+                  content TEXT, type TEXT, created_at TIMESTAMP, 
+                  phishing_text TEXT, malicious_text TEXT)""")  # UPDATED
     c.execute("""
         CREATE TABLE IF NOT EXISTS dispute_forms (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -39,6 +45,7 @@ def init_db():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
+    
     conn.commit()
     conn.close()
 
@@ -105,27 +112,36 @@ def on_join(project_id):
 
 @socketio.on("send-message")
 def on_message(data):
-    print("Received message data:", data)  # Debugging: Check if userId exists in request
+    print("Received message data:", data)
 
     user_id = data.get("userId")
     if not user_id:
         print("Error: userId is missing from the request")
         return
 
+
+    extracted = pb.extract_elements(data["content"])
+    elements = extracted["URLs"] + extracted["IPs"] + extracted["Domains"] + extracted["Emails"]
+    if elements:
+        phishing_result = pb.is_phishing(data["content"])
+        malicious_result = None
+    else:
+        phishing_result = None
+        malicious_result = detect_malicious_activity(data["content"])
+
     conn = sqlite3.connect("database.db")
     c = conn.cursor()
     
     c.execute(
-        """INSERT INTO messages (project_id, user_id, content, type, created_at)
-           VALUES (?, ?, ?, ?, ?)""",
-        (int(data["projectId"]), user_id, data["content"], data["type"], datetime.now().isoformat()),
+        """INSERT INTO messages (project_id, user_id, content, type, created_at, phishing_text, malicious_text)
+           VALUES (?, ?, ?, ?, ?, ?, ?)""",  # UPDATED
+        (int(data["projectId"]), user_id, data["content"], data["type"], datetime.now().isoformat(), json.dumps(phishing_result), malicious_result),
     )
 
     conn.commit()
     conn.close()
 
-    # Include userId in the emitted message
-    emit("message", {**data, "userId": user_id}, room=data["projectId"])
+    emit("message", {**data, "userId": user_id, "phishing_text": phishing_result, "malicious_text": malicious_result}, room=data["projectId"])  # UPDATED
 
 @app.route("/api/get_user_id", methods=["GET"])
 def get_user_id():
