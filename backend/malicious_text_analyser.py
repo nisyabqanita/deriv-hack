@@ -49,43 +49,52 @@ def live_detect_malicious_activity(new_message):
     )
 
     reply = message.content[0].text
-    add_message("assistant", reply)
     
     return reply
-
+import json
 # Analyse the overall chat history for report generation
-def analyse_chat_history():
+def analyse_chat_history(chat_history):
+    # Read the md file
+    with open("backend/prompts/suspicious_chat.md", "r", encoding="utf-8") as file:
+        prompt = file.read()
+
     message = claude_client.messages.create(
         model="claude-3-5-sonnet-20241022",
         max_tokens=1024,
-        system="You are a chatbot that analyses the chat history for malicious activity. You will analyse the chat history and generate a report that flag any malicious activity for further for investigation.",
+        system=prompt,
         messages=chat_history,
         temperature=0.2,
     )
 
-    return message.content[0].text
+    try:
+        response_json = json.loads(message.content[0].text)
+        return response_json  # Returns a dictionary
+    except json.JSONDecodeError:
+        raise ValueError("Failed to decode response JSON from Claude API.")
+
+    # return message.content[0].text
 
 
 # Test the function
-print(live_detect_malicious_activity("Hi! I want to buy $200 USDT from you. Is it still available?"))
-print(live_detect_malicious_activity("Yes, it’s available. You can send the payment using the listed method")) 
-print(live_detect_malicious_activity("Great! I’ll send via bank transfer (instant). What’s your account number?"))
-print(live_detect_malicious_activity("Great! I’ll send via bank transfer (instant). What’s your account number?"))
-print(live_detect_malicious_activity("Please follow the instructions on Deriv P2P. The platform will show my bank details after you initiate the order."))
-print(live_detect_malicious_activity("Oh, my Deriv app is lagging! Can you send me your bank details here instead? I’ll transfer manually."))
-print(live_detect_malicious_activity("I just sent the $200 USDT. Please check your account! ✅"))
-print(live_detect_malicious_activity("I haven’t received anything yet. Can you send a screenshot of the transaction?"))
-print(live_detect_malicious_activity("Here’s the proof. The money should reflect soon. Please release the USDT now."))
-print(live_detect_malicious_activity("Let me verify with my bank first. I won’t release the USDT until I confirm the funds."))
-print(live_detect_malicious_activity("I already sent it! Maybe your bank is slow. Just release the crypto so we don’t waste time."))
-print(live_detect_malicious_activity("Sorry, I can’t. If it’s a real transaction, I’ll see it in my account."))
-print(live_detect_malicious_activity("Why are you delaying? I need this urgently."))
-print(live_detect_malicious_activity("If you don’t release the USDT, I will report you to Deriv for scamming buyers."))
-print(live_detect_malicious_activity("I follow the platform’s rules. If your payment is real, I’ll see it in my bank."))
-print(live_detect_malicious_activity("Fine! I’ll cancel the order. But you wasted my time."))
-print(live_detect_malicious_activity("Okay"))
+# print(live_detect_malicious_activity("Hi! I want to buy $200 USDT from you. Is it still available?"))
+# print(live_detect_malicious_activity("Yes, it’s available. You can send the payment using the listed method")) 
+# print(live_detect_malicious_activity("Great! I’ll send via bank transfer (instant). What’s your account number?"))
+# print(live_detect_malicious_activity("Great! I’ll send via bank transfer (instant). What’s your account number?"))
+# print(live_detect_malicious_activity("Please follow the instructions on Deriv P2P. The platform will show my bank details after you initiate the order."))
+# print(live_detect_malicious_activity("Oh, my Deriv app is lagging! Can you send me your bank details here instead? I’ll transfer manually."))
+# print(live_detect_malicious_activity("I just sent the $200 USDT. Please check your account! ✅"))
+# print(live_detect_malicious_activity("I haven’t received anything yet. Can you send a screenshot of the transaction?"))
+# print(live_detect_malicious_activity("Here’s the proof. The money should reflect soon. Please release the USDT now."))
+# print(live_detect_malicious_activity("Let me verify with my bank first. I won’t release the USDT until I confirm the funds."))
+# print(live_detect_malicious_activity("I already sent it! Maybe your bank is slow. Just release the crypto so we don’t waste time."))
+# print(live_detect_malicious_activity("Sorry, I can’t. If it’s a real transaction, I’ll see it in my account."))
+# print(live_detect_malicious_activity("Why are you delaying? I need this urgently."))
+# print(live_detect_malicious_activity("If you don’t release the USDT, I will report you to Deriv for scamming buyers."))
+# print(live_detect_malicious_activity("I follow the platform’s rules. If your payment is real, I’ll see it in my bank."))
+# print(live_detect_malicious_activity("Fine! I’ll cancel the order. But you wasted my time."))
+# print(live_detect_malicious_activity("Okay"))
 
-print(analyse_chat_history())
+# print(analyse_chat_history())
 
 '''
 Example output:

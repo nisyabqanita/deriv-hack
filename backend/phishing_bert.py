@@ -119,6 +119,6 @@ def is_phishing(input):
     
     
 # EXAMPLE USAGE
-input = "please send me your password here: https://chatgpt.com/ my backup email is oyingfang@gmail.com connect to the server at 100.42.65.230 visit us at https://spectrum.um.edu.my/"
-results = is_phishing(input)
-print(results)
+# input = "please send me your password here: https://chatgpt.com/ my backup email is oyingfang@gmail.com connect to the server at 100.42.65.230 visit us at https://spectrum.um.edu.my/"
+# results = is_phishing(input)
+# print(results)

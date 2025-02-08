@@ -1,0 +1,66 @@
+[
+    {
+        "username": "CryptoGhost99",
+        "country_of_origin": "Nigeria",
+        "account_lifetime": 3,
+        "successful_trade": 5,
+        "unsuccessful_trade": 12,
+        "verification_status": "Unverified"
+    },
+    {
+        "username": "FastCashKing",
+        "country_of_origin": "Pakistan",
+        "account_lifetime": 6,
+        "successful_trade": 15,
+        "unsuccessful_trade": 8,
+        "verification_status": "Verified"
+    },
+    {
+        "username": "ShadyTraderX",
+        "country_of_origin": "Indonesia",
+        "account_lifetime": 2,
+        "successful_trade": 3,
+        "unsuccessful_trade": 9,
+        "verification_status": "Unverified"
+    },
+    {
+        "username": "RefundTrap777",
+        "country_of_origin": "Russia",
+        "account_lifetime": 1,
+        "successful_trade": 10,
+        "unsuccessful_trade": 6,
+        "verification_status": "Verified"
+    },
+    {
+        "username": "HonestHodler21",
+        "country_of_origin": "Philippines",
+        "account_lifetime": 12,
+        "successful_trade": 45,
+        "unsuccessful_trade": 2,
+        "verification_status": "Verified"
+    },
+    {
+        "username": "FairTradeMax",
+        "country_of_origin": "India",
+        "account_lifetime": 18,
+        "successful_trade": 72,
+        "unsuccessful_trade": 5,
+        "verification_status": "Verified"
+    },
+    {
+        "username": "CryptoNewbie2024",
+        "country_of_origin": "Brazil",
+        "account_lifetime": 6,
+        "successful_trade": 18,
+        "unsuccessful_trade": 3,
+        "verification_status": "Verified"
+    },
+    {
+        "username": "LegitTrader08",
+        "country_of_origin": "South Africa",
+        "account_lifetime": 9,
+        "successful_trade": 35,
+        "unsuccessful_trade": 4,
+        "verification_status": "Verified"
+    }
+]

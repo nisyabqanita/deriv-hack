@@ -1,0 +1,179 @@
+[
+    {
+      "advertisement_id": "AD12345",
+      "buyer_username": "CryptoGhost99",
+      "seller_username": "HonestHodler21",
+      "chat_history": [
+        {
+          "timestamp": "2025-02-09T12:05:00Z",
+          "sender": "CryptoGhost99",
+          "message": "Hey, I just placed an order! Will send payment in a moment."
+        },
+        {
+          "timestamp": "2025-02-09T12:06:30Z",
+          "sender": "HonestHodler21",
+          "message": "Alright, let me know once it's sent. I'll confirm when I receive it."
+        },
+        {
+          "timestamp": "2025-02-09T12:10:00Z",
+          "sender": "CryptoGhost99",
+          "message": "I just sent the payment! Check your account."
+        },
+        {
+          "timestamp": "2025-02-09T12:12:00Z",
+          "sender": "HonestHodler21",
+          "message": "I don’t see anything yet, maybe it’s still processing."
+        },
+        {
+          "timestamp": "2025-02-09T12:30:00Z",
+          "sender": "CryptoGhost99",
+          "message": "It’s a bank transfer, could take a while. Just release the crypto, the money is on its way."
+        },
+        {
+          "timestamp": "2025-02-09T12:40:00Z",
+          "sender": "HonestHodler21",
+          "message": "Are you sure? I still don’t see anything."
+        },
+        {
+          "timestamp": "2025-02-09T12:42:00Z",
+          "sender": "CryptoGhost99",
+          "message": "Yeah, 100%. It’s already deducted from my end. If you don’t release, I’ll have to escalate this."
+        },
+        {
+          "timestamp": "2025-02-09T12:50:00Z",
+          "sender": "HonestHodler21",
+          "message": "Okay, I’ll trust you and release it now."
+        },
+        {
+          "timestamp": "2025-02-09T13:00:00Z",
+          "sender": "HonestHodler21",
+          "message": "Wait… I still don’t see the money. Hello?"
+        },
+        {
+          "timestamp": "2025-02-09T13:05:00Z",
+          "sender": "CryptoGhost99",
+          "message": "User has left the chat."
+        }
+      ]
+    },
+    {
+      "advertisement_id": "AD67890",
+      "buyer_username": "FairTradeMax",
+      "seller_username": "FastCashKing",
+      "chat_history": [
+        {
+          "timestamp": "2025-02-09T15:00:00Z",
+          "sender": "FairTradeMax",
+          "message": "Hey, I just sent the payment. Can you confirm?"
+        },
+        {
+          "timestamp": "2025-02-09T15:02:30Z",
+          "sender": "FastCashKing",
+          "message": "Yeah, I see it. I’ll release soon."
+        },
+        {
+          "timestamp": "2025-02-09T15:10:00Z",
+          "sender": "FairTradeMax",
+          "message": "Alright, please release as soon as possible."
+        },
+        {
+          "timestamp": "2025-02-09T15:20:00Z",
+          "sender": "FastCashKing",
+          "message": "Yeah, just waiting for confirmation from my bank."
+        },
+        {
+          "timestamp": "2025-02-09T15:45:00Z",
+          "sender": "FairTradeMax",
+          "message": "It’s been a while. Are you still there?"
+        },
+        {
+          "timestamp": "2025-02-09T16:15:00Z",
+          "sender": "FastCashKing",
+          "message": "Yeah, sorry, got busy. Let me check."
+        },
+        {
+          "timestamp": "2025-02-09T16:30:00Z",
+          "sender": "FastCashKing",
+          "message": "Actually, I don’t see any funds yet. You sure you sent it?"
+        },
+        {
+          "timestamp": "2025-02-09T16:35:00Z",
+          "sender": "FairTradeMax",
+          "message": "Yes, I sent proof earlier!"
+        },
+        {
+          "timestamp": "2025-02-09T16:40:00Z",
+          "sender": "FastCashKing",
+          "message": "Might be a delay, bro. Let’s wait a bit."
+        },
+        {
+          "timestamp": "2025-02-09T17:30:00Z",
+          "sender": "FairTradeMax",
+          "message": "You scammed me, didn’t you?"
+        },
+        {
+          "timestamp": "2025-02-09T17:35:00Z",
+          "sender": "FastCashKing",
+          "message": "User has left the chat."
+        }
+      ]
+    },
+    {
+      "advertisement_id": "AD97531",
+      "buyer_username": "RefundTrap777",
+      "seller_username": "LegitTrader08",
+      "chat_history": [
+        {
+          "timestamp": "2025-02-09T18:30:00Z",
+          "sender": "RefundTrap777",
+          "message": "Hey, I just sent the payment! Check your account."
+        },
+        {
+          "timestamp": "2025-02-09T18:32:00Z",
+          "sender": "LegitTrader08",
+          "message": "Wait, you sent $200 instead of $100?"
+        },
+        {
+          "timestamp": "2025-02-09T18:33:30Z",
+          "sender": "RefundTrap777",
+          "message": "Oh no! That was a mistake. Can you send back $100?"
+        },
+        {
+          "timestamp": "2025-02-09T18:35:00Z",
+          "sender": "LegitTrader08",
+          "message": "I need to verify first."
+        },
+        {
+          "timestamp": "2025-02-09T18:40:00Z",
+          "sender": "RefundTrap777",
+          "message": "Please, I really need it back! Just send it fast!"
+        },
+        {
+          "timestamp": "2025-02-09T18:42:00Z",
+          "sender": "LegitTrader08",
+          "message": "Okay, sending now."
+        },
+        {
+          "timestamp": "2025-02-09T18:50:00Z",
+          "sender": "LegitTrader08",
+          "message": "Just sent it back. Check your account."
+        },
+        {
+          "timestamp": "2025-02-09T18:55:00Z",
+          "sender": "RefundTrap777",
+          "message": "Thanks, appreciate it!"
+        },
+        {
+          "timestamp": "2025-02-09T19:30:00Z",
+          "sender": "LegitTrader08",
+          "message": "Wait… My original payment got reversed. You scammed me!"
+        },
+        {
+          "timestamp": "2025-02-09T19:35:00Z",
+          "sender": "RefundTrap777",
+          "message": "User has left the chat."
+        }
+      ]
+    }
+  ]
+  
