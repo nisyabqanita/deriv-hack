@@ -12,35 +12,9 @@ const ProjectList = () => {
     const navigate = useNavigate();
   
     useEffect(() => {
-      async function fetchProjects() {
-        try {
-          const userId = localStorage.getItem('userId');
-          const response = await fetch(`/api/projects?userId=${userId}`);
-          let data = await response.json();
-    
-          if (data.length === 0) {
-            // Auto-create a project
-            const createResponse = await fetch('/api/projects', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                userId: userId,
-                title: 'New Project',
-                description: 'Auto-created project',
-              }),
-            });
-    
-            const newProject = await createResponse.json();
-            data = [newProject]; // Update data with the newly created project
-          }
-    
-          setProjects(data);
-        } catch (error) {
-          console.error('Error fetching projects:', error);
-        }
-      }
-    
-      fetchProjects();
+      fetch('/api/projects')
+        .then(res => res.json())
+        .then(data => setProjects(data));
     }, []);
   
     return (

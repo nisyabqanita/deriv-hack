@@ -72,7 +72,7 @@ export default function UserType() {
     >
       <Card className="w-full max-w-lg p-8 bg-white/95 shadow-lg border border-gray-300 rounded-xl">
         <h1 className="text-4xl font-semibold text-center mb-8 text-gray-900 tracking-wide">
-          Welcome to Deriv
+          Welcome to Deriv 
         </h1>
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* User Type */}
