@@ -1,3 +1,4 @@
+import base64
 from flask import Flask, request, jsonify
 from flask_socketio import SocketIO, emit, join_room, leave_room
 import smtplib
@@ -44,6 +45,19 @@ def init_db():
             file BLOB,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
+                  content TEXT, type TEXT, created_at TIMESTAMP)""")
+    c.execute("""CREATE TABLE IF NOT EXISTS dispute_forms (id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
+    phone TEXT,
+    category TEXT,
+    description TEXT,
+    orderId TEXT,
+    amount REAL,
+    country TEXT,
+    date_occurred DATE,
+    file BLOB,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
     """)
     
     conn.commit()
@@ -168,10 +182,13 @@ def submit_dispute():
         phone = request.form.get("phone")
         category = request.form.get("category")
         description = request.form.get("description")
+        orderId = request.form.get("orderId")
+        amount = request.form.get("amount")
+        country = request.form.get("country")
+        date_occurred = request.form.get("date_occurred")
         file = request.files.get("file")  # File is inside `request.files`
 
-        if not all([name, phone, category, description, file]):
-            return jsonify({"status": "error", "message": "All fields are required"}), 400
+      
 
         # Save file as binary data in the database
         file_data = file.read()
@@ -179,9 +196,9 @@ def submit_dispute():
         conn = sqlite3.connect("database.db")
         c = conn.cursor()
         c.execute("""
-            INSERT INTO dispute_forms (name, phone, category, description, file, created_at)
-            VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
-        """, (name, phone, category, description, file_data))
+            INSERT INTO dispute_forms (name, phone, category, description, orderId, amount, country, date_occurred, file, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+        """, (name, phone, category, description, orderId, amount, country, date_occurred, file_data))
 
         conn.commit()
         conn.close()
@@ -190,6 +207,40 @@ def submit_dispute():
 
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
+    
+# Route to get all disputes
+@app.route("/api/disputes", methods=["GET"])
+def get_disputes():
+    try:
+        conn = sqlite3.connect("database.db")
+        c = conn.cursor()
+        c.execute("SELECT id, name, phone, category, description, orderId, amount, country, date_occurred, file, created_at FROM dispute_forms ORDER BY created_at DESC")
+        
+        disputes = []
+        for row in c.fetchall():
+            disputes.append({
+                "id": row[0],
+                "name": row[1],
+                "phone": row[2],
+                "category": row[3],
+                "description": row[4],
+                "orderId": row[5],
+                "amount": row[6],
+                "country": row[7],
+                "date_occurred": row[8],
+                "file": base64.b64encode(row[9]).decode("utf-8") if row[9] else None,
+                "created_at": row[10]
+            })
+            
+        conn.close()
+        return jsonify(disputes)
+
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 500
+    
 if __name__ == "__main__":
     init_db()
     socketio.run(app, debug=True)
