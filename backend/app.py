@@ -57,9 +57,12 @@ def auth():
         "INSERT INTO users (email, user_type) VALUES (?, ?)",
         (data["email"], data["userType"]),
     )
+    user_id = c.lastrowid
+    print(user_id)
     conn.commit()
     conn.close()
-    return jsonify({"status": "success"})
+    return jsonify({"status": "success", "user_id": user_id})
+
 
 @app.route("/api/projects", methods=["GET"])
 def get_projects():
@@ -89,16 +92,27 @@ def on_join(project_id):
 
 @socketio.on("send-message")
 def on_message(data):
+    print("Received message data:", data)  # Debugging: Check if userId exists in request
+
+    user_id = data.get("userId")
+    if not user_id:
+        print("Error: userId is missing from the request")
+        return
+
     conn = sqlite3.connect("database.db")
     c = conn.cursor()
+    
     c.execute(
-        """INSERT INTO messages (project_id, content, type, created_at)
-                 VALUES (?, ?, ?, ?)""",
-        (data["projectId"], data["content"], data["type"], datetime.now().isoformat()),
+        """INSERT INTO messages (project_id, user_id, content, type, created_at)
+           VALUES (?, ?, ?, ?, ?)""",
+        (int(data["projectId"]), user_id, data["content"], data["type"], datetime.now().isoformat()),
     )
+
     conn.commit()
     conn.close()
-    emit("message", data, room=data["projectId"])
+
+    # Include userId in the emitted message
+    emit("message", {**data, "userId": user_id}, room=data["projectId"])
 
 @app.route("/api/get_user_id", methods=["GET"])
 def get_user_id():

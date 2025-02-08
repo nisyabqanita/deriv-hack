@@ -17,16 +17,24 @@ export default function UserType() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userType, email }),
       });
-      
+  
+      const data = await response.json();
+      console.log(data);
+  
       if (response.ok) {
-        // 将 email 存储到 localStorage
+        // Store user_id and email in localStorage
+        localStorage.setItem('userId', data.user_id);
         localStorage.setItem('userEmail', email);
+        
         navigate('/projects');
+      } else {
+        console.error('Authentication failed:', data.message);
       }
     } catch (error) {
       console.error('Error:', error);
     }
   };
+  
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
