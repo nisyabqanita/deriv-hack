@@ -29,25 +29,6 @@ def init_db():
     conn.commit()
     conn.close()
 
-# Email configuration
-SMTP_SERVER = "smtp.gmail.com"
-SMTP_PORT = 587
-SMTP_USERNAME = "your-email@gmail.com"  # Replace with your email
-SMTP_PASSWORD = "your-app-password"  # Replace with your app password
-
-def send_meeting_email(recipient, meeting_time):
-    msg = MIMEMultipart()
-    msg["From"] = SMTP_USERNAME
-    msg["To"] = recipient
-    msg["Subject"] = "Project Meeting Invitation"
-
-    body = f"You have been invited to a project meeting at {meeting_time}"
-    msg.attach(MIMEText(body, "plain"))
-
-    with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
-        server.starttls()
-        server.login(SMTP_USERNAME, SMTP_PASSWORD)
-        server.send_message(msg)
 
 @app.route("/api/create_project", methods=["POST"])
 def create_project():
@@ -119,36 +100,22 @@ def on_message(data):
     conn.close()
     emit("message", data, room=data["projectId"])
 
-@socketio.on("schedule-meeting")
-def on_schedule_meeting(data):
-    # Get all users in the project and send email
+@app.route("/api/get_user_id", methods=["GET"])
+def get_user_id():
+    email = request.args.get("email")
+    if not email:
+        return jsonify({"error": "Email is required"}), 400
+
     conn = sqlite3.connect("database.db")
     c = conn.cursor()
-    c.execute("SELECT email FROM users WHERE project_id = ?", (data["projectId"],))
-    recipients = [row[0] for row in c.fetchall()]
+    c.execute("SELECT id FROM users WHERE email = ?", (email,))
+    result = c.fetchone()
     conn.close()
 
-    for recipient in recipients:
-        send_meeting_email(recipient, data["time"])
-
-    emit(
-        "meeting-scheduled",
-        {"status": "success", "time": data["time"]},
-        room=data["projectId"],
-    )
-
-@socketio.on("editor-update")
-def on_editor_update(data):
-    conn = sqlite3.connect("database.db")
-    c = conn.cursor()
-    c.execute(
-        """INSERT INTO editor_content (project_id, content, updated_at)
-                 VALUES (?, ?, ?)""",
-        (data["projectId"], data["content"], datetime.now().isoformat()),
-    )
-    conn.commit()
-    conn.close()
-    emit("editor-update", json.loads(data["content"]), room=data["projectId"])
+    if result:
+        return jsonify({"userId": result[0]})
+    else:
+        return jsonify({"error": "User not found"}), 404
 
 if __name__ == "__main__":
     init_db()

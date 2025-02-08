@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import UserType from './pages/UserType';
 import ProjectList from './pages/ProjectList';
 import CollaborationSpace from './pages/CollaborationSpace';
-import Dashboard from "./pages/Dashboard";
+import Dashboard from './pages/dashboard/DashSales';
 
 
 export default function App() {
@@ -15,6 +15,7 @@ export default function App() {
           <Route path="/user-type" element={<UserType />} />
           <Route path="/projects" element={<ProjectList />} />
           <Route path="/collaboration/:projectId" element={<CollaborationSpace />} />
+          <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
       </BrowserRouter>
     </div>
