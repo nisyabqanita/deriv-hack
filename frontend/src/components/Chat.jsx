@@ -34,6 +34,18 @@ const ChatPanel = ({ socket, projectId }) => {
     scrollToBottom();
   }, [messages]);
 
+  // const handleSendMessage = () => {
+  //   if (!newMessage.trim()) return;
+    
+  //   socket.emit('send-message', {
+  //     projectId,
+  //     content: newMessage,
+  //     type: 'text'
+  //   });
+    
+  //   setNewMessage('');
+  // };
+
   const handleSendMessage = () => {
     if (!newMessage.trim()) return;
     
