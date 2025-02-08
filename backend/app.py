@@ -16,56 +16,31 @@ def init_db():
     c = conn.cursor()
 
     # Create tables if they don't exist
-    c.execute("""CREATE TABLE IF NOT EXISTS editor_content
-                 (id INTEGER PRIMARY KEY, project_id INTEGER, 
-                  content TEXT, updated_at TIMESTAMP)""")
-    c.execute("""CREATE TABLE IF NOT EXISTS users
-                 (id INTEGER PRIMARY KEY, email TEXT, user_type TEXT)""")
-    c.execute("""CREATE TABLE IF NOT EXISTS projects
-                 (id INTEGER PRIMARY KEY, title TEXT, description TEXT)""")
-    c.execute("""CREATE TABLE IF NOT EXISTS messages
-                 (id INTEGER PRIMARY KEY, project_id INTEGER, user_id INTEGER, 
-                  content TEXT, type TEXT, created_at TIMESTAMP)""")
+    c.execute("""CREATE TABLE IF NOT EXISTS users (
+                 id INTEGER PRIMARY KEY, 
+                 email TEXT UNIQUE NOT NULL, 
+                 user_type TEXT NOT NULL)""")
+    
+    c.execute("""CREATE TABLE IF NOT EXISTS chat_rooms (
+                 id INTEGER PRIMARY KEY, 
+                 buyer_id INTEGER NOT NULL, 
+                 seller_id INTEGER NOT NULL, 
+                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                 FOREIGN KEY (buyer_id) REFERENCES users(id) ON DELETE CASCADE, 
+                 FOREIGN KEY (seller_id) REFERENCES users(id) ON DELETE CASCADE)""")
+    
+    c.execute("""CREATE TABLE IF NOT EXISTS chat_messages (
+                 id INTEGER PRIMARY KEY, 
+                 chat_room_id INTEGER NOT NULL, 
+                 sender_id INTEGER NOT NULL, 
+                 content TEXT NOT NULL, 
+                 message_type TEXT NOT NULL, 
+                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                 FOREIGN KEY (chat_room_id) REFERENCES chat_rooms(id) ON DELETE CASCADE, 
+                 FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE)""")
+    
     conn.commit()
     conn.close()
-
-# Email configuration
-SMTP_SERVER = "smtp.gmail.com"
-SMTP_PORT = 587
-SMTP_USERNAME = "your-email@gmail.com"  # Replace with your email
-SMTP_PASSWORD = "your-app-password"  # Replace with your app password
-
-def send_meeting_email(recipient, meeting_time):
-    msg = MIMEMultipart()
-    msg["From"] = SMTP_USERNAME
-    msg["To"] = recipient
-    msg["Subject"] = "Project Meeting Invitation"
-
-    body = f"You have been invited to a project meeting at {meeting_time}"
-    msg.attach(MIMEText(body, "plain"))
-
-    with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
-        server.starttls()
-        server.login(SMTP_USERNAME, SMTP_PASSWORD)
-        server.send_message(msg)
-
-@app.route("/api/create_project", methods=["POST"])
-def create_project():
-    data = request.json
-    if not data or "title" not in data or "description" not in data:
-        return jsonify({"status": "error", "message": "Missing title or description"}), 400
-
-    conn = sqlite3.connect("database.db")
-    c = conn.cursor()
-    c.execute(
-        "INSERT INTO projects (title, description) VALUES (?, ?)",
-        (data["title"], data["description"]),
-    )
-    conn.commit()
-    project_id = c.lastrowid
-    conn.close()
-
-    return jsonify({"status": "success", "project_id": project_id}), 201
 
 @app.route("/api/auth", methods=["POST"])
 def auth():
@@ -80,75 +55,48 @@ def auth():
     conn.close()
     return jsonify({"status": "success"})
 
-@app.route("/api/projects", methods=["GET"])
-def get_projects():
+@app.route("/api/create_chatroom", methods=["POST"])
+def create_chatroom():
+    data = request.json
+    if not data or "buyer_id" not in data or "seller_id" not in data:
+        return jsonify({"status": "error", "message": "Missing buyer or seller ID"}), 400
+
     conn = sqlite3.connect("database.db")
     c = conn.cursor()
-    c.execute("SELECT * FROM projects")
-    projects = c.fetchall()
+    c.execute(
+        "INSERT INTO chat_rooms (buyer_id, seller_id) VALUES (?, ?)",
+        (data["buyer_id"], data["seller_id"]),
+    )
+    conn.commit()
+    chat_room_id = c.lastrowid
     conn.close()
-    return jsonify([{"id": p[0], "title": p[1], "description": p[2]} for p in projects])
+
+    return jsonify({"status": "success", "chat_room_id": chat_room_id}), 201
 
 # Socket.IO events
-@socketio.on("join-project")
-def on_join(project_id):
-    join_room(project_id)
+@socketio.on("join-chatroom")
+def on_join(chat_room_id):
+    join_room(chat_room_id)
     # Load existing messages
     conn = sqlite3.connect("database.db")
     c = conn.cursor()
-    c.execute("SELECT * FROM messages WHERE project_id = ?", (project_id,))
+    c.execute("SELECT * FROM chat_messages WHERE chat_room_id = ?", (chat_room_id,))
     messages = c.fetchall()
-    # Load existing editor content
-    c.execute("SELECT content FROM editor_content WHERE project_id = ? ORDER BY updated_at DESC LIMIT 1", (project_id,))
-    editor_content = c.fetchone()
     conn.close()
-    emit("message-history", messages, room=project_id)
-    if editor_content:
-        emit("editor-content", json.loads(editor_content[0]), room=project_id)
+    emit("message-history", messages, room=chat_room_id)
 
 @socketio.on("send-message")
 def on_message(data):
     conn = sqlite3.connect("database.db")
     c = conn.cursor()
     c.execute(
-        """INSERT INTO messages (project_id, content, type, created_at)
-                 VALUES (?, ?, ?, ?)""",
-        (data["projectId"], data["content"], data["type"], datetime.now().isoformat()),
+        """INSERT INTO chat_messages (chat_room_id, sender_id, content, message_type, created_at)
+                 VALUES (?, ?, ?, ?, ?)""",
+        (data["chatRoomId"], data["senderId"], data["content"], data["messageType"], datetime.now().isoformat()),
     )
     conn.commit()
     conn.close()
-    emit("message", data, room=data["projectId"])
-
-@socketio.on("schedule-meeting")
-def on_schedule_meeting(data):
-    # Get all users in the project and send email
-    conn = sqlite3.connect("database.db")
-    c = conn.cursor()
-    c.execute("SELECT email FROM users WHERE project_id = ?", (data["projectId"],))
-    recipients = [row[0] for row in c.fetchall()]
-    conn.close()
-
-    for recipient in recipients:
-        send_meeting_email(recipient, data["time"])
-
-    emit(
-        "meeting-scheduled",
-        {"status": "success", "time": data["time"]},
-        room=data["projectId"],
-    )
-
-@socketio.on("editor-update")
-def on_editor_update(data):
-    conn = sqlite3.connect("database.db")
-    c = conn.cursor()
-    c.execute(
-        """INSERT INTO editor_content (project_id, content, updated_at)
-                 VALUES (?, ?, ?)""",
-        (data["projectId"], data["content"], datetime.now().isoformat()),
-    )
-    conn.commit()
-    conn.close()
-    emit("editor-update", json.loads(data["content"]), room=data["projectId"])
+    emit("message", data, room=data["chatRoomId"])
 
 if __name__ == "__main__":
     init_db()
