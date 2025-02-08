@@ -11,7 +11,8 @@ import torch.nn.functional as F
 import re
 
 # import the model and tokenizer
-model_name = "ealvaradob/bert-finetuned-phishing"
+# model_name = "ealvaradob/bert-finetuned-phishing"
+model_name = "CrabInHoney/urlbert-tiny-v3-phishing-classifier"
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 model = AutoModelForSequenceClassification.from_pretrained(model_name)
 
@@ -118,6 +119,6 @@ def is_phishing(input):
     
     
 # EXAMPLE USAGE
-input = "please send me your password here: https://phishing.com my backup email is oyingfang@gmail.com connect to the server at 100.42.65.230 visit us at https://spectrum.um.edu.my/"
+input = "please send me your password here: https://chatgpt.com/ my backup email is oyingfang@gmail.com connect to the server at 100.42.65.230 visit us at https://spectrum.um.edu.my/"
 results = is_phishing(input)
 print(results)

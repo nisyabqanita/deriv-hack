@@ -60,3 +60,4 @@ Return the extracted transactions in **JSON format**, structured like this:
 2. **Pass the extracted raw text to Claude 3.5 Sonnet using the prompt above.**  
 3. **Store the extracted data in JSON or CSV format.**  
 4. **Compare the extracted data against reference figures to detect inconsistencies or fraudulent transactions.**  
+5. **Return the JSON Value only**

@@ -47,7 +47,7 @@ def call_openai_api(image_path):
     base64_image = encode_image(image_path)
 
     # Read the md file
-    with open("backend/POT_gpt_prompt.md", "r", encoding="utf-8") as file:
+    with open("backend/prompts/POT_gpt_prompt.md", "r", encoding="utf-8") as file:
         prompt = file.read()
 
     response = gpt_client.chat.completions.create(
@@ -70,7 +70,7 @@ def call_openai_api(image_path):
         max_tokens=300,
     )
 
-    return response.choices[0].message.content 
+    return response.choices[0].message.content
 
 
 # Claude to compare the sum of the transaction documents
@@ -87,7 +87,7 @@ def call_claude_api(image_path):
     base64_image = encode_image(image_path)
 
     # Read the md file
-    with open("backend/Claude_OCR_prompt.md", "r", encoding="utf-8") as file:
+    with open("backend/prompts/Claude_OCR_prompt.md", "r", encoding="utf-8") as file:
         prompt = file.read()
 
     message = claude_client.messages.create(
@@ -104,8 +104,13 @@ def call_claude_api(image_path):
                             "media_type": "image/jpeg",
                             "data": base64_image,
                         },
+                        "cache_control": {"type": "ephemeral"},
                     },
-                    {"type": "text", "text": prompt},
+                    {
+                        "type": "text",
+                        "text": prompt,
+                        "cache_control": {"type": "ephemeral"},
+                    },
                 ],
             }
         ],
@@ -116,8 +121,8 @@ def call_claude_api(image_path):
 
 # Example usage
 image_path = "backend/tng_detailed.jpg"
-gpt_response = call_openai_api(image_path)
-print(gpt_response)
+# gpt_response = call_openai_api(image_path)
+# print(gpt_response)
 
 claude_response = call_claude_api(image_path)
 print(claude_response)
