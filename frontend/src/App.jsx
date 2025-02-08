@@ -3,6 +3,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import UserType from './pages/UserType';
 import ProjectList from './pages/ProjectList';
 import CollaborationSpace from './pages/CollaborationSpace';
+import Dashboard from "./pages/Dashboard";
+
 
 export default function App() {
   return (
