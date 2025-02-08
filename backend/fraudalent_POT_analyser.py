@@ -7,7 +7,9 @@ Features:
 - Determines if the sum of the transaction documents is accurate
 
 To-do:
-- Prompt engineering for better POT fraud detection
+- Prompt engineering for better POT fraud detection //
+- To compare claude json with database values
+- Make it deterministic by using a scoring system
 """
 
 import os
@@ -24,7 +26,7 @@ if not openai_key:
         "API Key not found. Make sure you have set OPENAI_API_KEY in your .env file."
     )
 
-client = OpenAI(api_key=openai_key)
+gpt_client = OpenAI(api_key=openai_key)
 
 
 # Function to encode the image
@@ -43,20 +45,21 @@ def decode_image(image_path):
 def call_openai_api(image_path):
     # To remove and replace with SQL call
     base64_image = encode_image(image_path)
-    response = client.chat.completions.create(
+
+    # Read the md file
+    with open("backend/POT_gpt_prompt.md", "r", encoding="utf-8") as file:
+        prompt = file.read()
+
+    response = gpt_client.chat.completions.create(
         model="gpt-4o",
         messages=[
             {
                 "role": "system",
-                "content": "You will validate the authenticity of the transaction documents.",
+                "content": prompt,
             },
             {
                 "role": "user",
                 "content": [
-                    {
-                        "type": "text",
-                        "text": "What is in this image?",
-                    },
                     {
                         "type": "image_url",
                         "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"},
@@ -67,7 +70,7 @@ def call_openai_api(image_path):
         max_tokens=300,
     )
 
-    return response.choices[0]
+    return response.choices[0].message.content 
 
 
 # Claude to compare the sum of the transaction documents
@@ -76,13 +79,18 @@ if not claude_key:
     raise ValueError(
         "API Key not found. Make sure you have set CLAUDE_API_KEY in your .env file."
     )
-client = anthropic.Anthropic(api_key=claude_key)
+claude_client = anthropic.Anthropic(api_key=claude_key)
 
 
 def call_claude_api(image_path):
     # To remove and replace with SQL call
     base64_image = encode_image(image_path)
-    message = client.messages.create(
+
+    # Read the md file
+    with open("backend/Claude_OCR_prompt.md", "r", encoding="utf-8") as file:
+        prompt = file.read()
+
+    message = claude_client.messages.create(
         model="claude-3-5-sonnet-20241022",
         max_tokens=1024,
         messages=[
@@ -97,7 +105,7 @@ def call_claude_api(image_path):
                             "data": base64_image,
                         },
                     },
-                    {"type": "text", "text": "Return text in this image"},
+                    {"type": "text", "text": prompt},
                 ],
             }
         ],
@@ -107,9 +115,9 @@ def call_claude_api(image_path):
 
 
 # Example usage
-image_path = "backend\Bank_Statement.jpg"
-# response = call_openai_api(image_path)
-# print(response)
+image_path = "backend/tng_detailed.jpg"
+gpt_response = call_openai_api(image_path)
+print(gpt_response)
 
-response = call_claude_api(image_path)
-print(response)
+claude_response = call_claude_api(image_path)
+print(claude_response)
