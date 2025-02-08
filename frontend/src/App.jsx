@@ -4,6 +4,7 @@ import UserType from './pages/UserType';
 import ProjectList from './pages/ProjectList';
 import CollaborationSpace from './pages/CollaborationSpace';
 import Dashboard from './pages/dashboard/DashSales';
+import DisputeForm from './pages/DisputeForm';
 
 
 export default function App() {
@@ -16,6 +17,7 @@ export default function App() {
           <Route path="/projects" element={<ProjectList />} />
           <Route path="/collaboration/:projectId" element={<CollaborationSpace />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/disputeForm" element={<DisputeForm />} />
         </Routes>
       </BrowserRouter>
     </div>

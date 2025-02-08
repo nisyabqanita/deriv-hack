@@ -6,10 +6,12 @@ from email.mime.multipart import MIMEMultipart
 import json
 from datetime import datetime
 import sqlite3
+from flask_cors import CORS
 
 app = Flask(__name__)
-socketio = SocketIO(app, cors_allowed_origins="*")
 
+socketio = SocketIO(app, cors_allowed_origins="*")
+CORS(app)
 # Database setup
 def init_db():
     conn = sqlite3.connect("database.db")
@@ -26,6 +28,17 @@ def init_db():
     c.execute("""CREATE TABLE IF NOT EXISTS messages
                  (id INTEGER PRIMARY KEY, project_id INTEGER, user_id INTEGER, 
                   content TEXT, type TEXT, created_at TIMESTAMP)""")
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS dispute_forms (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            phone TEXT NOT NULL,
+            category TEXT NOT NULL,
+            description TEXT NOT NULL,
+            file BLOB,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
     conn.commit()
     conn.close()
 
@@ -130,7 +143,38 @@ def get_user_id():
         return jsonify({"userId": result[0]})
     else:
         return jsonify({"error": "User not found"}), 404
+    
+@app.route("/api/submit_dispute", methods=["POST"])
+def submit_dispute():
+    try:
+        # Extract form fields (not JSON)
+        name = request.form.get("name")
+        phone = request.form.get("phone")
+        category = request.form.get("category")
+        description = request.form.get("description")
+        file = request.files.get("file")  # File is inside `request.files`
 
+        if not all([name, phone, category, description, file]):
+            return jsonify({"status": "error", "message": "All fields are required"}), 400
+
+        # Save file as binary data in the database
+        file_data = file.read()
+
+        conn = sqlite3.connect("database.db")
+        c = conn.cursor()
+        c.execute("""
+            INSERT INTO dispute_forms (name, phone, category, description, file, created_at)
+            VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+        """, (name, phone, category, description, file_data))
+
+        conn.commit()
+        conn.close()
+
+        return jsonify({"status": "success", "message": "Dispute submitted successfully!"}), 201
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
 if __name__ == "__main__":
     init_db()
     socketio.run(app, debug=True)
+    app.run(debug=True, port=5000)
