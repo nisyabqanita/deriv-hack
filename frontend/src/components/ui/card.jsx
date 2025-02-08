@@ -13,3 +13,14 @@ export const Card = React.forwardRef(({ className, ...props }, ref) => {
     />
   );
 });
+
+export const CardContent = ({ className, children, ...props }) => {
+  return (
+    <div
+      className={cn("p-4", className)}
+      {...props}
+    >
+      {children}
+    </div>
+  );
+};
