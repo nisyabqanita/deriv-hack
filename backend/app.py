@@ -34,31 +34,12 @@ def init_db():
     c.execute("""CREATE TABLE IF NOT EXISTS messages
                  (id INTEGER PRIMARY KEY, project_id INTEGER, user_id INTEGER, 
                   content TEXT, type TEXT, created_at TIMESTAMP, 
-                  phishing_text TEXT, malicious_text TEXT)""")  # UPDATED
-    c.execute("""
-        CREATE TABLE IF NOT EXISTS dispute_forms (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            phone TEXT NOT NULL,
-            category TEXT NOT NULL,
-            description TEXT NOT NULL,
-            file BLOB,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-                  content TEXT, type TEXT, created_at TIMESTAMP)""")
-    c.execute("""CREATE TABLE IF NOT EXISTS dispute_forms (id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT,
-    phone TEXT,
-    category TEXT,
-    description TEXT,
-    orderId TEXT,
-    amount REAL,
-    country TEXT,
-    date_occurred DATE,
-    file BLOB,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-)
-    """)
+                  phishing_text TEXT, malicious_text TEXT)""")  
+    c.execute("""CREATE TABLE IF NOT EXISTS dispute_forms (
+                  id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, phone TEXT, category TEXT, 
+                  description TEXT, orderId TEXT, amount REAL, country TEXT, date_occurred DATE, 
+                  file BLOB, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)""")
+
     
     conn.commit()
     conn.close()
