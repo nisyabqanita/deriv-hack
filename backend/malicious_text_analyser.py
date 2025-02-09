@@ -81,7 +81,7 @@ def analyse_chat_history(chat_history):
 
 
 # Test the function
-# print(live_detect_malicious_activity("Hi! I want to buy $200 USDT from you. Is it still available?"))
+print(live_detect_malicious_activity("Hi! I want to buy $200 USDT from you. Is it still available?"))
 # print(live_detect_malicious_activity("Yes, it’s available. You can send the payment using the listed method")) 
 # print(live_detect_malicious_activity("Great! I’ll send via bank transfer (instant). What’s your account number?"))
 # print(live_detect_malicious_activity("Great! I’ll send via bank transfer (instant). What’s your account number?"))
