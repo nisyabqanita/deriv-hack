@@ -51,6 +51,7 @@ def live_detect_malicious_activity(new_message):
     reply = message.content[0].text
     
     return reply
+
 import json
 # Analyse the overall chat history for report generation
 def analyse_chat_history(chat_history):
@@ -66,8 +67,12 @@ def analyse_chat_history(chat_history):
         temperature=0.2,
     )
 
+    # print(message.content[0].text)
+
     try:
-        response_json = json.loads(message.content[0].text)
+        raw_text = message.content[0].text
+        cleaned_text = raw_text.split("<<<end of human interaction>>>")[0].strip()
+        response_json = json.loads(cleaned_text)
         return response_json  # Returns a dictionary
     except json.JSONDecodeError:
         raise ValueError("Failed to decode response JSON from Claude API.")
@@ -76,7 +81,7 @@ def analyse_chat_history(chat_history):
 
 
 # Test the function
-# print(live_detect_malicious_activity("Hi! I want to buy $200 USDT from you. Is it still available?"))
+print(live_detect_malicious_activity("Hi! I want to buy $200 USDT from you. Is it still available?"))
 # print(live_detect_malicious_activity("Yes, it’s available. You can send the payment using the listed method")) 
 # print(live_detect_malicious_activity("Great! I’ll send via bank transfer (instant). What’s your account number?"))
 # print(live_detect_malicious_activity("Great! I’ll send via bank transfer (instant). What’s your account number?"))
