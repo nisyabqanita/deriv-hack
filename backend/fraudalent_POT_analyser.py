@@ -15,7 +15,6 @@ To-do:
 import os
 import base64
 import anthropic
-import sqlite3
 from openai import OpenAI
 from dotenv import load_dotenv
 from transformers import AutoModel, AutoTokenizer
@@ -74,45 +73,6 @@ def call_openai_api(image_path):
 
     return response.choices[0].message.content
 
-# def call_openai_api(dispute_id):
-#     # Fetch image from database
-#     conn = sqlite3.connect("database.db")
-#     c = conn.cursor()
-#     c.execute("SELECT file FROM dispute_forms WHERE id = ?", (dispute_id,))
-#     row = c.fetchone()
-#     conn.close()
-
-#     if not row or not row[0]:
-#         raise ValueError("No image found for this dispute")
-
-#     # Convert BLOB to base64
-#     base64_image = base64.b64encode(row[0]).decode('utf-8')
-
-#     # Read the md file
-#     with open("backend/prompts/POT_gpt_prompt.md", "r", encoding="utf-8") as file:
-#         prompt = file.read()
-
-#     response = gpt_client.chat.completions.create(
-#         model="gpt-4o",
-#         messages=[
-#             {
-#                 "role": "system",
-#                 "content": prompt,
-#             },
-#             {
-#                 "role": "user",
-#                 "content": [
-#                     {
-#                         "type": "image_url",
-#                 "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"},
-#                     },
-#                 ],
-#             },
-#         ],
-#         max_tokens=300,
-#     )
-
-#     return response.choices[0].message.content
 
 # Claude to compare the sum of the transaction documents
 claude_key = os.getenv("CLAUDE_API_KEY")

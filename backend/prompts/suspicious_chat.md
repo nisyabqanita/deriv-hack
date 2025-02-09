@@ -84,6 +84,7 @@ Return your findings as a **Python dictionary**, with each flagged instance stru
             "reason": "<Why this message is suspicious>",
             "fraud_type": "<Type of fraud detected>"
         },
+        ...
     ]
 }
 
@@ -107,15 +108,6 @@ Return your findings as a **Python dictionary**, with each flagged instance stru
 
 
 **Rules:**  
-1. Do **not** generate any explanations or summaries, only return the dictionary.  
-2. If no fraud is detected, return 
-{
-    "flagged_activity": [
-        {
-            "message": "No Fraud",
-            "reason": "No Fraud",
-            "fraud_type": "No Fraud"
-        },
-    ]
-}.  
-3. Maintain **strict objectivity**, only flag messages that match fraud patterns.
+1. Do **not** generate any explanations or summaries—only return the dictionary.  
+2. If no fraud is detected, return: `{"flagged_activity": []}`.  
+3. Maintain **strict objectivity**, only flag messages that match fraud patterns.  

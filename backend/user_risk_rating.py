@@ -141,6 +141,7 @@ def calculate_chat_history_risk(username):
         for message in chat["chat_history"]:
             chat_messages.append({"role": "user" if message["sender"] == username else "assistant", "content": message["message"]})
 
+    
     response_data = mta.analyse_chat_history(chat_messages)
     # response_str = response_str.replace("'", '"')
     # print(response_data)
@@ -153,8 +154,6 @@ def calculate_chat_history_risk(username):
 
     # Loop through flagged data
     for flag in flagged_data:
-        if flag.get("fraud_type") == "No Fraud":
-            continue
         fraud_type = flag.get("fraud_type", "Unknown")
         risk_score += FRAUD_SEVERITY.get(fraud_type, 10)  # Default risk for unknown fraud types
 
@@ -186,19 +185,11 @@ def calculate_risk_profile(username):
         (chat_risk * WEIGHTS["chat_history_risk_report"])
     )
 
-    if total_risk > 70:
-        risk_profile = "High Risk"
-    elif total_risk > 40:
-        risk_profile = "Moderate Risk"
-    else:
-        risk_profile = "Low Risk"
-
     return {
         "username": username,
         "user_background_risk_score": round(background_risk, 2),
         "chat_history_risk_report": round(chat_risk, 2),
-        "total_risk": round(total_risk, 2),
-        "risk_profile": risk_profile
+        "total_risk": round(total_risk, 2)
     }
 
 # Example usage
@@ -211,10 +202,10 @@ def calculate_risk_profile(username):
 # history = get_chat_history("CryptoGhost99")
 # print(history)
 
-risk_profile = calculate_risk_profile("HonestHodler21")
-print(risk_profile)
+# risk_profile = calculate_risk_profile("CryptoGhost99")
+# print(risk_profile)
 
 # Output
 '''
-{'username': 'CryptoGhost99', 'user_background_risk_score': 100, 'chat_history_risk_report': 70, 'total_risk': 79.0, 'risk_profile': 'High Risk'}
+{'username': 'CryptoGhost99', 'user_background_risk_score': 100, 'chat_history_risk_report': 70, 'total_risk': 79.0}
 '''
