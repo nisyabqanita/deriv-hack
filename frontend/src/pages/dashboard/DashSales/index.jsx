@@ -17,12 +17,12 @@ import productData from '../../../data/productTableData';
 
 // Hardcoded dispute data
 const disputeData = [
-  { country: 'USA', disputes: 120 },
-  { country: 'UK', disputes: 100 },
-  { country: 'Germany', disputes: 90 },
+  { country: 'Africa', disputes: 120 },
+  { country: 'Nigeria', disputes: 100 },
+  { country: 'India', disputes: 90 },
   { country: 'India', disputes: 85 },
   { country: 'Canada', disputes: 80 },
-  { country: 'Australia', disputes: 75 },
+  { country: 'Hong Kong', disputes: 75 },
   { country: 'Brazil', disputes: 70 },
   { country: 'France', disputes: 65 },
   { country: 'Japan', disputes: 60 },
@@ -141,31 +141,30 @@ export default function DashSales() {
           <Card className="flat-card w-100">
             <div className="row-table">
               <Card.Body className="col-sm-6 br">
-                <FlatCard params={{ title: 'Customers', iconClass: 'text-primary mb-1', icon: 'group', value: '1000' }} />
+                <FlatCard params={{ title: 'Total Dispute', iconClass: 'text-primary mb-1',value: '1000' }} />
               </Card.Body>
               <Card.Body className="col-sm-6 d-none d-md-table-cell d-lg-table-cell d-xl-table-cell card-body br">
-                <FlatCard params={{ title: 'Revenue', iconClass: 'text-primary mb-1', icon: 'language', value: '1252' }} />
+                <FlatCard params={{ title: 'Active Dispute', iconClass: 'text-primary mb-1', value: '30' }} />
               </Card.Body>
               <Card.Body className="col-sm-6 card-bod">
-                <FlatCard params={{ title: 'Growth', iconClass: 'text-primary mb-1', icon: 'unarchive', value: '600' }} />
+                <FlatCard params={{ title: 'Closed Disputed', iconClass: 'text-primary mb-1', value: '970' }} />
               </Card.Body>
             </div>
             <div className="row-table">
               <Card.Body className="col-sm-6 br">
                 <FlatCard
                   params={{
-                    title: 'Returns',
+                    title: 'Average Dispute Resolutioin Time',
                     iconClass: 'text-primary mb-1',
-                    icon: 'swap_horizontal_circle',
-                    value: '3550',
+                    value: '30 minutes',
                   }}
                 />
               </Card.Body>
               <Card.Body className="col-sm-6 d-none d-md-table-cell d-lg-table-cell d-xl-table-cell card-body br">
-                <FlatCard params={{ title: 'Downloads', iconClass: 'text-primary mb-1', icon: 'cloud_download', value: '3550' }} />
+                <FlatCard params={{ title: 'No of Dispute Escalated To Admin', iconClass: 'text-primary mb-1',value: '10' }} />
               </Card.Body>
               <Card.Body className="col-sm-6 card-bod">
-                <FlatCard params={{ title: 'Order', iconClass: 'text-primary mb-1', icon: 'shopping_cart', value: '100%' }} />
+                <FlatCard params={{ title: 'No of AI Resoluved Cases', iconClass: 'text-primary mb-1', value: '918' }} />
               </Card.Body>
             </div>
           </Card>
@@ -198,7 +197,7 @@ export default function DashSales() {
               <Row className="pb-2">
                 <div className="col-auto m-b-10">
                   <h3 className="mb-1">$21,356.46</h3>
-                  <span>Total Sales</span>
+                  <span>Total Amount Invovled In Dispute</span>
                 </div>
                 <div className="col-auto m-b-10">
                   <h3 className="mb-1">$1935.6</h3>
@@ -214,9 +213,7 @@ export default function DashSales() {
         <Col md={12} xl={6}>
           <ProductTable {...productData} />
         </Col>
-        <Col md={12} xl={6}>
-          <FeedTable {...feedData} />
-        </Col>
+
       </Row>
     </div>
   );
