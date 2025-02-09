@@ -43,7 +43,7 @@ def live_detect_malicious_activity(new_message):
     message = claude_client.messages.create(
         model="claude-3-5-haiku-20241022",
         max_tokens=1024,
-        system="You are a chatbot that detects fraudulent user behavior. You will analyse the message and only flag if you detect malicious activity. give output in dictionary format, for example {'flag': True, 'reason': 'phishing'}",
+        system="You are a chatbot that detects fraudulent user behavior. You will analyse the message and only flag if you can confidently detect malicious activity. give output in dictionary format, for example {'flag': True, 'reason': 'phishing'}",
         messages=chat_history,
         temperature=0.2,
     )
@@ -60,7 +60,7 @@ def analyse_chat_history(chat_history):
         prompt = file.read()
 
     message = claude_client.messages.create(
-        model="claude-3-5-sonnet-20241022",
+        model="claude-3-5-haiku-20241022",
         max_tokens=1024,
         system=prompt,
         messages=chat_history,
@@ -81,7 +81,7 @@ def analyse_chat_history(chat_history):
 
 
 # Test the function
-print(live_detect_malicious_activity("Hi! I want to buy $200 USDT from you. Is it still available?"))
+# print(live_detect_malicious_activity("Hi!"))
 # print(live_detect_malicious_activity("Yes, it’s available. You can send the payment using the listed method")) 
 # print(live_detect_malicious_activity("Great! I’ll send via bank transfer (instant). What’s your account number?"))
 # print(live_detect_malicious_activity("Great! I’ll send via bank transfer (instant). What’s your account number?"))
