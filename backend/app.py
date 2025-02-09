@@ -122,7 +122,7 @@ def on_message(data):
         malicious_result = None
     else:
         phishing_result = None
-        malicious_result = detect_malicious_activity(data["content"])
+        malicious_result = live_detect_malicious_activity(data["content"])
 
     conn = sqlite3.connect("database.db")
     c = conn.cursor()
